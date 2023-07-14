@@ -16,7 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from api import views
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/data/',view=views.student_data),
+    path('api/data/<int:pk>/',view=views.change_data),
+    path('api/data/search/',view=views.search_student_GPA),
+    path('api/data/first_student/',view=views.get_ten_first_student),
+    path('api/data/get_count/',view=views.get_data),
+   # path('api/data/get_GPA/',view=views.get_specific_field),
 ]
