@@ -60,6 +60,7 @@ def get_data(request):
        "number of student in college is ":data
    }
    return Response(json,status=status.HTTP_200_OK)
+
 @api_view(['POST'])
 def enroll_subject(request):
     newStudent=Student()

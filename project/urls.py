@@ -26,3 +26,4 @@ urlpatterns = [
     path('api/data/get_count/',view=views.get_data),
     path('api/data/enroll_subject/',view=views.enroll_subject),
 ]
+admin.site.site_header='FCI SYSTEM'
