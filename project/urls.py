@@ -24,5 +24,5 @@ urlpatterns = [
     path('api/data/search/',view=views.search_student_GPA),
     path('api/data/first_student/',view=views.get_ten_first_student),
     path('api/data/get_count/',view=views.get_data),
-   # path('api/data/get_GPA/',view=views.get_specific_field),
+    path('api/data/enroll_subject/',view=views.enroll_subject),
 ]

@@ -51,8 +51,8 @@ def get_ten_first_student(request):
     op=student.order_by('-student_GPA')[:10]
     serializer = studentSerializer(op, many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)
-   
-        
+
+
 @api_view(['GET'])
 def get_data(request):
    data=get_count()
@@ -60,3 +60,17 @@ def get_data(request):
        "number of student in college is ":data
    }
    return Response(json,status=status.HTTP_200_OK)
+@api_view(['POST'])
+def enroll_subject(request):
+    newStudent=Student()
+    newStudent.first_name=request.data['first_name']
+    newStudent.last_name=request.data['last_name']
+    newStudent.student_level=request.data['student_level']
+    newStudent.course= Course.objects.get(id=request.data['course_id'])
+    newStudent.department=Department.objects.get(id=request.data['department_id'])
+    new_enroll=Student.objects.create(first_name= newStudent.first_name,last_name=newStudent.last_name,student_level= newStudent.student_level,department= newStudent.department,course= newStudent.course)
+    new_enroll.save()
+    json={
+        "message":"successfully encrolling in course "
+    }
+    return Response(json,status=status.HTTP_201_CREATED)

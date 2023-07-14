@@ -49,13 +49,13 @@ class Department(models.Model):
 class Student(models.Model):
     first_name=models.CharField(max_length=15,verbose_name='first name')
     last_name=models.CharField(max_length=15,verbose_name='last name')
-    student_age=models.IntegerField(default=0,verbose_name='age')
-    student_address=models.CharField(max_length=20,verbose_name='address')
+    student_age=models.IntegerField(default=0,verbose_name='age',blank=True,null=True)
+    student_address=models.CharField(max_length=20,verbose_name='address',blank=True,null=True)
     student_mobile=models.ForeignKey(Mobile,on_delete=models.CASCADE,related_name='student',blank=True,null=True)
-    student_GPA=models.DecimalField(max_digits=3,decimal_places=2)
+    student_GPA=models.DecimalField(max_digits=3,decimal_places=2,blank=True,null=True)
     student_level=models.CharField(max_length=1,choices=level,verbose_name='level')
     department=models.ForeignKey(Department,on_delete=models.CASCADE,verbose_name='department',related_name='student',blank=True,null=True)
-    cousre=models.ForeignKey(Course,null=True,blank=True,on_delete=models.CASCADE)
+    course=models.ForeignKey(Course,null=True,blank=True,on_delete=models.CASCADE)
     def __str__(self):
         return str(self.first_name+' '+self.last_name)
 def get_count():
