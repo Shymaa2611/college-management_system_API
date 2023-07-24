@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from api import views
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +25,7 @@ urlpatterns = [
     path('api/data/first_student/',view=views.get_ten_first_student),
     path('api/data/get_count/',view=views.get_data),
     path('api/data/enroll_subject/',view=views.enroll_subject),
+    path('api/data/report/<int:pk>/',view=views.generate_report),
+    path('users/',include('accounts.urls'))
 ]
 admin.site.site_header='FCI SYSTEM'

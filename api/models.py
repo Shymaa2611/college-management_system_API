@@ -13,9 +13,13 @@ level={
     ("3","3"),
     ("4","4")
 }
+attendance={
+    ("attend","attend"),
+    ("absent","absent"),
+
+}
 class Course(models.Model):
     course_name=models.CharField(max_length=20,blank=True,null=True,verbose_name='course')
-    course_score=models.IntegerField(default=0,verbose_name='score')
     def __str__(self):
         return self.course_name
 
@@ -28,6 +32,7 @@ class Mobile(models.Model):
 
 
 class Instructor(models.Model):
+    user=models.OneToOneField(User,on_delete=models.CASCADE,null=True,blank=True)
     first_name=models.CharField(max_length=15,verbose_name='first name')
     last_name=models.CharField(max_length=15,verbose_name='last name')
     instructor_salary=models.DecimalField(verbose_name='salary',max_digits=5,decimal_places=1)
@@ -47,6 +52,7 @@ class Department(models.Model):
 
 
 class Student(models.Model):
+    user=models.OneToOneField(User,on_delete=models.CASCADE,null=True,blank=True)
     first_name=models.CharField(max_length=15,verbose_name='first name')
     last_name=models.CharField(max_length=15,verbose_name='last name')
     student_age=models.IntegerField(default=0,verbose_name='age',blank=True,null=True)
@@ -56,8 +62,12 @@ class Student(models.Model):
     student_level=models.CharField(max_length=1,choices=level,verbose_name='level')
     department=models.ForeignKey(Department,on_delete=models.CASCADE,verbose_name='department',related_name='student',blank=True,null=True)
     course=models.ForeignKey(Course,null=True,blank=True,on_delete=models.CASCADE)
+    grade=models.IntegerField(default=0,blank=True,null=True)
+    attendance=models.CharField(max_length=10,choices=attendance,null=True,blank=True)
     def __str__(self):
         return str(self.first_name+' '+self.last_name)
+
+
 def get_count():
     student=Student.objects.all()
     op=str(student.count())

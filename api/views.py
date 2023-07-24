@@ -4,6 +4,10 @@ from rest_framework.decorators import api_view
 import  rest_framework.status  as status
 from .models import Course,Student,Instructor,Department,get_count
 from .serializers import courseSerializer,studentSerializer,instructorSerializer,departmentSerializer
+from django.http import HttpResponse, FileResponse
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+
 @api_view(['GET','POST'])
 def student_data(request):
     if request.method=='GET':
@@ -75,3 +79,18 @@ def enroll_subject(request):
         "message":"successfully encrolling in course "
     }
     return Response(json,status=status.HTTP_201_CREATED)
+@api_view(['POST'])
+
+def generate_report(request,pk):
+    student = Student.objects.get(pk=pk)
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{student.first_name}_report.pdf"'
+    p = canvas.Canvas(response)
+    p.drawString(100, 750, f'Student Report for {student.first_name}')
+    p.drawString(100, 700, f'Grade: {student.grade}')
+    p.drawString(100, 650, f'Attendance: {student.attendance}')
+    p.showPage()
+    p.save()
+    response = FileResponse(open(f'{student.first_name}_report.pdf', 'rb'), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{student.first_name}_report.pdf"'
+    return response
