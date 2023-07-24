@@ -17,12 +17,11 @@ class mobileSerializer(serializers.ModelSerializer):
 class studentSerializer(serializers.ModelSerializer):
     class Meta:
         model=Student
-        fields='__all__'
+        fields=['user','first_name','last_name','student_age','student_address','student_level','department','course','GPA']
 class gradeSerializer(serializers.ModelSerializer):
     class Meta:
         model=Grade
         fields='__all__'
-
 class attendenceSerializer(serializers.ModelSerializer):
     class Meta:
         model=Attendance
