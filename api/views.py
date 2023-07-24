@@ -2,8 +2,8 @@ from .models import Student
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import  rest_framework.status  as status
-from .models import Course,Student,Instructor,Department,get_count
-from .serializers import courseSerializer,studentSerializer,instructorSerializer,departmentSerializer
+from .models import Course,Student,Instructor,get_count,Attendance
+from .serializers import courseSerializer,studentSerializer,instructorSerializer,attendenceSerializer
 from django.http import HttpResponse, FileResponse
 from django.http import FileResponse
 from reportlab.pdfgen import canvas
@@ -72,7 +72,6 @@ def enroll_subject(request):
     newStudent.last_name=request.data['last_name']
     newStudent.student_level=request.data['student_level']
     newStudent.course= Course.objects.get(id=request.data['course_id'])
-    newStudent.department=Department.objects.get(id=request.data['department_id'])
     new_enroll=Student.objects.create(first_name= newStudent.first_name,last_name=newStudent.last_name,student_level= newStudent.student_level,department= newStudent.department,course= newStudent.course)
     new_enroll.save()
     json={
@@ -94,3 +93,39 @@ def generate_report(request,pk):
     response = FileResponse(open(f'{student.first_name}_report.pdf', 'rb'), content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{student.first_name}_report.pdf"'
     return response
+
+@api_view(['GET','POST'])
+def student_attendeance(request, pk):
+
+    if 'attendance' in request.data:
+            student= Student.objects.get(pk=pk)
+            course_name= request.data['course_name']
+            attendance= request.data['attendance']
+            first_name = request.data['first_name']
+            user =Instructor.objects.get(first_name=first_name)
+            course =Course.objects.get(course_name=course_name)
+            try:
+                attend= Attendance.objects.get(instructor=user, student=student.pk,course=course) 
+                attend.attendance =attendance
+                attend.save()
+                serializer =attendenceSerializer(attend,many=False)
+                json = {
+                    'message': 'attendance of studentis Updated',
+                    'result': serializer.data
+                }
+                return Response(json , status=status.HTTP_201_CREATED)
+
+            except:
+                attend = Attendance.objects.create(attendance=attendance, student=student,course=course ,instructor=user)
+                serializer=attendenceSerializer(attend, many=False)
+                json = {
+                    'message': 'student attendance is Created',
+                    'result': serializer.data
+                }
+                return Response(json , status=status.HTTP_200_OK)
+
+    else:
+            json = {
+                'message': 'is not valid'
+            }
+            return Response(json , status=status.HTTP_400_BAD_REQUEST)
