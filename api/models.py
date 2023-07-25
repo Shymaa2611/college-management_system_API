@@ -41,7 +41,6 @@ class Instructor(models.Model):
         return str(self.first_name+' '+self.last_name)
 
 
-
 class Student(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,null=True,blank=True)
     first_name=models.CharField(max_length=15,verbose_name='first name')
@@ -54,15 +53,8 @@ class Student(models.Model):
     department=models.CharField(max_length=5,choices=department)
     #grade=models.IntegerField(default=0,blank=True,null=True)
     course=models.ManyToManyField(Course,related_name='student')
-    def GPA(self):
-        sum_grade=0
-        grades=Grade.objects.filter(student=self)
-        for grade in grades:
-            sum_grade+=grade.grade
-        count_value=Grade.objects.filter(student=self).count()
-        if count_value==0:
-               count_value=1  
-        return sum_grade/count_value
+    GPA=models.FloatField(default=0)
+
 
     def __str__(self):
         return str(self.first_name+' '+self.last_name)
@@ -73,6 +65,7 @@ class Attendance(models.Model):
     course=models.ForeignKey(Course,on_delete=models.CASCADE,blank=True,null=True)
     attendance=models.CharField(max_length=20)
    
+
 class Grade(models.Model):
    student=models.ForeignKey(Student,on_delete=models.CASCADE)
    Course=models.ForeignKey(Course,on_delete=models.CASCADE,blank=True,null=True)

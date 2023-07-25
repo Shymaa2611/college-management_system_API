@@ -25,7 +25,7 @@ urlpatterns = [
     path('api/data/first_student/',view=views.get_ten_first_student),
     path('api/data/get_count/',view=views.get_data),
     path('api/data/enroll_subject/',view=views.enroll_subject),
-    path('api/data/attendance/<int:pk>/',view=views.student_attendeance),
+    path('api/data/attendance/<int:pk>/',view=views.student_attendance),
     path('api/data/report/<int:pk>/',view=views.generate_report),
     path('users/',include('accounts.urls'))
 ]

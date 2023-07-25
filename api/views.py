@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import  rest_framework.status  as status
 from .models import Course,Student,Instructor,get_count,Attendance
-from .serializers import courseSerializer,studentSerializer,instructorSerializer,attendenceSerializer
+from .serializers import courseSerializer,studentSerializer,instructorSerializer,attendenceSerializer,get_GPA
 from django.http import HttpResponse, FileResponse
 from django.http import FileResponse
 from reportlab.pdfgen import canvas
@@ -12,10 +12,12 @@ from reportlab.pdfgen import canvas
 def student_data(request):
     if request.method=='GET':
         student=Student.objects.all()
+        student.GPA=get_GPA
         serializer = studentSerializer(student, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
         serializer = studentSerializer(data= request.data)
+        serializer.GPA=get_GPA
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status= status.HTTP_201_CREATED)
@@ -52,7 +54,7 @@ def search_student_GPA(request):
 @api_view(['GET'])
 def get_ten_first_student(request):
     student=Student.objects.all()
-    op=student.order_by('-student_GPA')[:10]
+    op=student.order_by('-GPA')[:10]
     serializer = studentSerializer(op, many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)
 
@@ -71,8 +73,8 @@ def enroll_subject(request):
     newStudent.first_name=request.data['first_name']
     newStudent.last_name=request.data['last_name']
     newStudent.student_level=request.data['student_level']
-    newStudent.course= Course.objects.get(id=request.data['course_id'])
-    new_enroll=Student.objects.create(first_name= newStudent.first_name,last_name=newStudent.last_name,student_level= newStudent.student_level,department= newStudent.department,course= newStudent.course)
+    newStudent.course= Course.objects.get(course_name=request.data['course_name'])
+    new_enroll=Student.objects.create(first_name= newStudent.first_name,last_name=newStudent.last_name,student_level= newStudent.student_level,department= newStudent.department,course=newStudent.course)
     new_enroll.save()
     json={
         "message":"successfully encrolling in course "
@@ -95,7 +97,7 @@ def generate_report(request,pk):
     return response
 
 @api_view(['GET','POST'])
-def student_attendeance(request, pk):
+def student_attendance(request, pk):
 
     if 'attendance' in request.data:
             student= Student.objects.get(pk=pk)

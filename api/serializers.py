@@ -18,6 +18,7 @@ class studentSerializer(serializers.ModelSerializer):
     class Meta:
         model=Student
         fields=['user','first_name','last_name','student_age','student_address','student_level','department','course','GPA']
+
 class gradeSerializer(serializers.ModelSerializer):
     class Meta:
         model=Grade
@@ -26,3 +27,14 @@ class attendenceSerializer(serializers.ModelSerializer):
     class Meta:
         model=Attendance
         fields='__all__'
+
+def get_GPA(self):
+        student=Student.objects.all()
+        sum_grade=0
+        grades=Grade.objects.filter(student=self)
+        for grade in grades:
+            sum_grade+=grade.grade
+        count_value=Grade.objects.filter(student=self).count()
+        if count_value==0:
+               count_value=1  
+        return sum_grade/count_value
